@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useForm, FormProvider, Controller } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import 'react-phone-number-input/style.css';
 import './cardStyles.css';
@@ -20,10 +20,7 @@ const ChallengePage = () => {
   const { handleSubmit, getValues, trigger } = methods;
 
   // Check if local storage has a flipped card, default to false
-  const [isFlipped, setIsFlipped] = useState(() => {
-    const storedIsFlipped = localStorage.getItem("isFlipped");
-    return storedIsFlipped ? JSON.parse(storedIsFlipped) : false;
-  });
+  const [isFlipped, setIsFlipped] = useState(false);
 
   // Load isFlipped state from local storage on component mount
   useEffect(() => {
