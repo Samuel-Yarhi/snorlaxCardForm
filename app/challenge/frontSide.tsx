@@ -113,7 +113,7 @@ const FrontSide = ({ isFlipped, setIsFlipped }: {
         const countryCode = selectedCountry?.value;
         if (countryCode) {
             setLoadingCities(true); // Set loading to true before fetching cities
-            axios.get(`http://api.geonames.org/searchJSON?formatted=true&country=${countryCode}&username=sam_yarhi&featureClass=P&maxRows=1000`)
+            axios.get(`https://api.geonames.org/searchJSON?formatted=true&country=${countryCode}&username=sam_yarhi&featureClass=P&maxRows=1000`)
                 .then(response => {
                     if (response.data && response.data.geonames) {
                         const cityOptions = response.data.geonames.map((city: any) => ({
