@@ -108,17 +108,36 @@ const FrontSide = ({ isFlipped, setIsFlipped }: {
         localStorage.setItem("isFlipped", JSON.stringify(isFlipped));
     }, [isFlipped]);
 
+    interface City {
+        tags: {
+            name: string;
+            // Add other properties if needed based on the Overpass response
+        };
+    }
+
     // Fetch cities when a country is selected
     const handleCountryChange = (selectedCountry: any) => {
         const countryCode = selectedCountry?.value;
         if (countryCode) {
             setLoadingCities(true); // Set loading to true before fetching cities
-            axios.get(`https://api.geonames.org/searchJSON?formatted=true&country=${countryCode}&username=sam_yarhi&featureClass=P&maxRows=1000`)
+
+            const overpassQuery = `
+                [out:json];
+                area["ISO3166-1"="${countryCode}"]->.searchArea;
+                (
+                    node["place"="city"](area.searchArea);
+                    node["place"="town"](area.searchArea);
+                    node["place"="village"](area.searchArea);
+                );
+                out body;
+            `;
+
+            axios.post('https://overpass-api.de/api/interpreter', overpassQuery, { timeout: 10000 }) // 10 seconds timeout
                 .then(response => {
-                    if (response.data && response.data.geonames) {
-                        const cityOptions = response.data.geonames.map((city: any) => ({
-                            label: city.name,
-                            value: city.name
+                    if (response.data.elements) {
+                        const cityOptions = response.data.elements.map((city: City) => ({
+                            label: city.tags.name,
+                            value: city.tags.name,
                         }));
                         setCities(cityOptions);
                     } else {
